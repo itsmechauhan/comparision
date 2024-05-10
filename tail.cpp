@@ -1,18 +1,11 @@
-/*
-Write C programs to demonstrate the following operations on a circular linked list  
-* Creation of a list 
-* Adding an element at the beginning of the list. 
-* Adding an element at the end of the list. 
-* Deleting the first element. 
-* Deleting the last element. 
-*/
 #include<stdio.h>
 #include<stdlib.h>
 int count=0;
 struct node{
     int data;
     node* next;
-}*tail=NULL,*newnode,*temp,*prevnode;
+}*head=NULL,*newnode,*temp,*temp2,*prevnode;
+
 void create();
 void traverse();
 void insert_beg();
@@ -21,6 +14,7 @@ void insert_pos();
 void delete_beg();
 void delete_end();
 void delete_pos();
+
 int main(){
 create();
 traverse();
@@ -37,66 +31,77 @@ traverse();
 delete_pos();
 traverse();
 }
+
 void create(){
     int n;
     printf("Enter the size of CLL:");
     scanf("%d",&n);
     for(int i=1;i<=n;i++){
-        newnode=(struct node*)malloc(sizeof(node));
+        newnode=(struct node*)malloc(sizeof(struct node));
         newnode->next=NULL;
         printf("Enter DATA: ");
         scanf("%d",&newnode->data);
         count++;
-        if(tail==NULL){
-            tail=newnode;
-            tail->next=newnode;
+        if(head==NULL){
+            head=newnode;
+            head->next=newnode;
+            prevnode=newnode;
         }
         else{
-            newnode->next=tail->next;
-            tail->next=newnode;
-            tail=newnode;
+            newnode->next=prevnode->next;
+            prevnode->next=newnode;
+            prevnode=newnode;
         }
     }
 }
 
 void traverse(){
-    temp=tail->next;
+    temp=head;
     printf("\n\n Circular LL: ");
     do{
         printf(" %d",temp->data);
         temp=temp->next;
-    }while(temp!=tail->next);
+    }while(temp!=head);
     
 }
-void insert_beg(){
-printf("\n\nInserting new node at the starting of cLL \n");
-newnode=(struct node*)malloc(sizeof(node));
-printf("\nEnter DAta to insert at begining: ");
-scanf("%d",&newnode->data);
 
-newnode->next=tail->next;
-tail->next=newnode;
+void insert_beg(){
+
+printf("\n\nInserting new node at the starting of cLL \n");
+newnode=(struct node*)malloc(sizeof(struct node));
+printf("\nEnter Data to insert at begining: ");
+scanf("%d",&newnode->data);
+temp=head;
+while(temp->next!=head){
+    temp=temp->next;
+}
+temp->next=newnode;
+newnode->next=head;
+head=newnode;
 }
 
 void insert_end(){
 newnode=(struct node*)malloc(sizeof(struct node));
 printf("\nEnter Data to insert at Last node: ");
 scanf("%d",&newnode->data);
-newnode->next=tail->next;
-tail->next=newnode;
-tail=newnode;
+temp=head;
+while(temp->next!=head){
+    temp=temp->next;
+}
+temp->next=newnode;
+newnode->next=head;
 }
 
 void insert_pos(){
     int idx,i=1;
     printf("\nEnter Pos where you want to insert data: ");
     scanf("%d",&idx);
-    temp=tail->next;
+    temp=head;
     while(i<idx-1){
         temp=temp->next;
         i++;
     }
-    newnode=(struct node*)malloc(sizeof(node));
+    newnode=(struct node*)malloc(sizeof(struct node));
     printf("\nEnter Data to insert at node-> %d : ",idx);
     scanf("%d",&newnode->data);
     count++;
@@ -105,18 +110,23 @@ void insert_pos(){
 }
 
 void delete_beg(){
-    temp=tail->next;
+    temp=head;
+    temp2=head;
     printf("\nDeleting the first node! \n");
-    tail->next=temp->next;
+    while(temp2->next!=head){
+    temp2=temp2->next;
+}
+    head=temp->next;
+    temp2->next=head;
     free(temp);
 }
 
 void delete_pos(){
     int j = 1, idx;
-    temp = tail->next;
+    temp = head;
     printf("\nEnter the position of node which you want to delete: ");
     scanf("%d", &idx);
-    if(tail->next == NULL){
+    if(head == NULL){
         printf("\nList is Empty!!");
     }
     else if(idx > count){
@@ -136,13 +146,12 @@ void delete_pos(){
 }
 
 void delete_end(){
-    temp=tail->next;
-    while(temp!=tail){
+    temp=head;
+    while(temp->next!=head){
         prevnode=temp;
         temp=temp->next;
     }
     printf("\ndeleting last node !!\n");
-    prevnode->next=tail->next;
-    tail=prevnode;
+    prevnode->next=head;
     free(temp);
 }
